@@ -296,6 +296,36 @@ button:active {
 }
 
 /* ==========================================================================
+   7. Specific Category Left-Border Styles
+   ========================================================================== */
+/* Personal: Teal */
+.note-card.category-personal {
+  border-left: 6px solid #0d9488;
+}
+.note-card.category-personal .note-tag {
+  background-color: #ccfbf1;
+  color: #0f766e;
+}
+
+/* Work: Dark Red */
+.note-card.category-work {
+  border-left: 6px solid #881337;
+}
+.note-card.category-work .note-tag {
+  background-color: #ffe4e6;
+  color: #881337;
+}
+
+/* Study: Blue */
+.note-card.category-study {
+  border-left: 6px solid #2563eb;
+}
+.note-card.category-study .note-tag {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+/* ==========================================================================
    7. Responsive Design (Small Screens)
    ========================================================================== */
 @media (max-width: 600px) {

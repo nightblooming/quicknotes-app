@@ -9,13 +9,13 @@
 </head>
 <body>
   <header>
-    <h1>Quick Notes</h1>
+    <h1>Quick Notes - note down your thoughts</h1>
   </header>
 
   <main>
     <!-- Section 1: Note Creation Form -->
     <section aria-labelledby="create-note-heading">
-      <h2 id="create-note-heading">Add a New Note</h2>
+      <h2 id="create-note-heading">Add a Note</h2>
       
       <form id="note-form" novalidate>
         <div class="form-group">
@@ -35,12 +35,11 @@
           <select id="note-category" name="noteCategory">
             <option value="Personal">Personal</option>
             <option value="Work">Work</option>
-            <option value="Ideas">Ideas</option>
-            <option value="Tasks">Tasks</option>
+            <option value="Study">Study</option>
           </select>
         </div>
 
-        <button type="submit" id="add-note-btn">Save Note</button>
+        <button type="submit" id="add-note-btn">Add Note</button>
       </form>
 
       <!-- Live validation message display -->
