@@ -12,7 +12,7 @@ const noteCount = document.querySelector('#note-count');
 const STORAGE_KEY = 'quick_notes_data';
 const MAX_NOTE_LENGTH = 200;
 
-// Central notes array initialized from storage
+// Load notes from localStorage on page open
 let notes = loadNotes();
 
 // ==========================================================================
@@ -53,9 +53,6 @@ function setError(message = '') {
   errorMessage.textContent = message;
 }
 
-/**
- * Returns a human-readable date and time string.
- */
 function getReadableTimestamp() {
   const now = new Date();
   return now.toLocaleString('en-US', {
@@ -76,11 +73,26 @@ function render() {
 
   const query = searchInput.value.trim().toLowerCase();
 
+  // Case-insensitive filtering against note text
   const filteredNotes = notes.filter((note) =>
     note.text.toLowerCase().includes(query)
   );
 
+  // Update counter to reflect count of current visible results
   updateCount(filteredNotes.length);
+
+  // If user searched for something and no notes matched
+  if (filteredNotes.length === 0 && query !== '') {
+    const emptyLi = document.createElement('li');
+    emptyLi.className = 'empty-search-message';
+    emptyLi.style.textAlign = 'center';
+    emptyLi.style.padding = '1.5rem';
+    emptyLi.style.color = 'var(--text-muted, #64748b)';
+    emptyLi.style.fontStyle = 'italic';
+    emptyLi.textContent = 'No notes match your search.';
+    notesList.appendChild(emptyLi);
+    return;
+  }
 
   filteredNotes.forEach((note) => {
     const li = document.createElement('li');
@@ -95,7 +107,7 @@ function render() {
     p.className = 'note-text';
     p.textContent = note.text;
 
-    // Metadata bar: category badge + readable timestamp
+    // Metadata bar: category badge + human-readable timestamp
     const metaWrap = document.createElement('div');
     metaWrap.className = 'note-meta';
     metaWrap.style.display = 'flex';
@@ -115,7 +127,7 @@ function render() {
     metaWrap.append(categoryTag, dateDisplay);
     contentWrap.append(p, metaWrap);
 
-    // Delete Button (removes its own note)
+    // Delete Button
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-note-btn';
     deleteBtn.type = 'button';
@@ -132,7 +144,7 @@ function render() {
 }
 
 // ==========================================================================
-// 5. Actions: Add & Delete
+// 5. Actions: Add & Delete (Mutate + Save + Render)
 // ==========================================================================
 function addNote(text, category) {
   const newNote = {
@@ -161,39 +173,33 @@ noteForm.addEventListener('submit', (event) => {
 
   const trimmedText = noteInput.value.trim();
 
-  // 1. Empty or spaces-only validation
   if (trimmedText === '') {
     setError('Please type a note first.');
     noteInput.focus();
     return;
   }
 
-  // 2. Character limit validation
   if (trimmedText.length > MAX_NOTE_LENGTH) {
     setError('Notes must be 200 characters or fewer.');
     noteInput.focus();
     return;
   }
 
-  // 3. Clear error when valid note is added
   setError('');
-
-  // Add note, persist to localStorage, and re-render
   addNote(trimmedText, noteCategory.value);
 
-  // Clear input and focus back
   noteInput.value = '';
   noteInput.focus();
 });
 
-// Clear error message when the user begins typing again
+// Clear error notice when user resumes typing
 noteInput.addEventListener('input', () => {
   if (errorMessage.textContent) {
     setError('');
   }
 });
 
-// Real-time search filter listener
+// Real-time case-insensitive search
 searchInput.addEventListener('input', () => {
   render();
 });
