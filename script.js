@@ -1,5 +1,5 @@
 // ==========================================================================
-// 1. DOM Elements & State
+// 1. Element Selectors & State
 // ==========================================================================
 const noteForm = document.querySelector('#note-form');
 const noteInput = document.querySelector('#note-input');
@@ -12,7 +12,7 @@ const noteCount = document.querySelector('#note-count');
 const STORAGE_KEY = 'quick_notes_data';
 const MAX_NOTE_LENGTH = 200;
 
-// Central notes array
+// Central notes array initialized from storage
 let notes = loadNotes();
 
 // ==========================================================================
@@ -37,7 +37,7 @@ function saveNotes() {
 }
 
 // ==========================================================================
-// 3. UI Helpers: Counter & Error Messages
+// 3. UI Helpers
 // ==========================================================================
 function updateCount(count) {
   if (count === 0) {
@@ -53,41 +53,67 @@ function setError(message = '') {
   errorMessage.textContent = message;
 }
 
+/**
+ * Returns a clean, human-readable date and time string.
+ */
+function getReadableTimestamp() {
+  const now = new Date();
+  return now.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+}
+
 // ==========================================================================
 // 4. Render Function
 // ==========================================================================
 function render() {
-  // Clear existing items
   notesList.replaceChildren();
 
   const query = searchInput.value.trim().toLowerCase();
 
-  // Filter notes matching search query
   const filteredNotes = notes.filter((note) =>
     note.text.toLowerCase().includes(query)
   );
 
-  // Update dynamic count indicator
   updateCount(filteredNotes.length);
 
-  // Rebuild list using createElement & textContent (XSS-safe)
   filteredNotes.forEach((note) => {
     const li = document.createElement('li');
     li.className = `note-card category-${note.category.toLowerCase()}`;
 
-    // Content container
+    // Wrapper for note content
     const contentWrap = document.createElement('div');
     contentWrap.className = 'note-content-wrap';
 
+    // Note body text
     const p = document.createElement('p');
     p.className = 'note-text';
-    p.textContent = note.text; // Safe text insertion
+    p.textContent = note.text;
 
-    const tag = document.createElement('span');
-    tag.className = 'note-tag';
-    tag.textContent = note.category;
+    // Metadata bar: category badge + human-readable timestamp
+    const metaWrap = document.createElement('div');
+    metaWrap.className = 'note-meta';
+    metaWrap.style.display = 'flex';
+    metaWrap.style.gap = '0.75rem';
+    metaWrap.style.alignItems = 'center';
 
-    contentWrap.append(p, tag);
+    const categoryTag = document.createElement('span');
+    categoryTag.className = 'note-tag';
+    categoryTag.textContent = note.category;
+
+    const dateDisplay = document.createElement('time');
+    dateDisplay.className = 'note-date';
+    dateDisplay.style.fontSize = '0.75rem';
+    dateDisplay.style.color = 'var(--text-muted, #64748b)';
+    dateDisplay.textContent = note.createdAt;
+
+    metaWrap.append(categoryTag, dateDisplay);
+    contentWrap.append(p, metaWrap);
 
     // Delete Button
     const deleteBtn = document.createElement('button');
@@ -111,12 +137,12 @@ function render() {
 function addNote(text, category) {
   const newNote = {
     id: Date.now().toString(),
-    text,
-    category,
-    createdAt: new Date().toISOString()
+    text: text,
+    category: category,
+    createdAt: getReadableTimestamp()
   };
 
-  notes.unshift(newNote); // Prepend so latest notes show first
+  notes.unshift(newNote);
   saveNotes();
   render();
 }
@@ -128,7 +154,7 @@ function deleteNote(id) {
 }
 
 // ==========================================================================
-// 6. Event Handlers
+// 6. Event Listeners
 // ==========================================================================
 noteForm.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -148,28 +174,28 @@ noteForm.addEventListener('submit', (event) => {
     return;
   }
 
-  // Clear previous errors and add note
+  // Clear validation error if any
   setError('');
+
+  // Add note object, persist & re-render
   addNote(trimmedText, noteCategory.value);
 
-  // Reset input field
+  // Clear input and return focus
   noteInput.value = '';
   noteInput.focus();
 });
 
-// Clear error state while the user types
 noteInput.addEventListener('input', () => {
   if (errorMessage.textContent) {
     setError('');
   }
 });
 
-// Search input listener
 searchInput.addEventListener('input', () => {
   render();
 });
 
 // ==========================================================================
-// 7. Initial Page Load
+// 7. Initial Run
 // ==========================================================================
 render();
