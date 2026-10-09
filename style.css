@@ -1,0 +1,336 @@
+/* ==========================================================================
+   1. Reset & Base Typography
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-color: #f8fafc;
+  --surface-color: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --danger: #ef4444;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   2. Header, Main Area & Footer Structure
+   ========================================================================== */
+header {
+  background-color: var(--surface-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.25rem 2rem;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.025em;
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  max-width: 860px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+footer {
+  background-color: var(--surface-color);
+  border-top: 1px solid var(--border-color);
+  text-align: center;
+  padding: 1.25rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-top: auto;
+}
+
+/* Section styling */
+section {
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-sm);
+}
+
+section h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  color: var(--text-main);
+}
+
+/* ==========================================================================
+   3. Flexbox Form & Controls
+   ========================================================================== */
+#note-form {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-group:first-child {
+  flex: 2; /* Content input expands more */
+}
+
+.form-group:nth-child(2) {
+  flex: 1; /* Category selector */
+  min-width: 140px;
+}
+
+label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+input[type="text"],
+input[type="search"],
+select {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.95rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background-color: #fff;
+  color: var(--text-main);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="search"]:focus,
+select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* ==========================================================================
+   4. Buttons & Hover Styles
+   ========================================================================== */
+button {
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.65rem 1.25rem;
+  border: none;
+  border-radius: var(--radius-sm);
+  background-color: var(--primary);
+  color: #ffffff;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+
+button:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Delete / Action buttons inside cards */
+.delete-note-btn {
+  background-color: transparent;
+  color: var(--danger);
+  padding: 0.35rem 0.6rem;
+  font-size: 0.8rem;
+  border: 1px solid var(--danger);
+}
+
+.delete-note-btn:hover {
+  background-color: var(--danger);
+  color: #ffffff;
+}
+
+/* Validation message */
+#error-message {
+  margin-top: 0.75rem;
+  color: var(--danger);
+  font-size: 0.875rem;
+  font-weight: 500;
+  min-height: 1.25rem;
+}
+
+/* Search bar & count indicator */
+.search-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+#note-count {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+/* ==========================================================================
+   5. Card Design for Notes List
+   ========================================================================== */
+#notes-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.note-card {
+  padding: 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin: 0;
+  background-color: var(--surface-color);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.note-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.note-content-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.note-text {
+  font-size: 1rem;
+  color: var(--text-main);
+  word-break: break-word;
+}
+
+.note-tag {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  width: fit-content;
+}
+
+/* ==========================================================================
+   6. Distinct Category Visual Styles
+   ========================================================================== */
+/* Personal: Warm amber theme */
+.note-card.category-personal {
+  border-left: 6px solid #f59e0b;
+}
+.note-card.category-personal .note-tag {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+/* Work: Royal blue theme */
+.note-card.category-work {
+  border-left: 6px solid #3b82f6;
+}
+.note-card.category-work .note-tag {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+/* Ideas: Purple / Violet theme */
+.note-card.category-ideas {
+  border-left: 6px solid #8b5cf6;
+}
+.note-card.category-ideas .note-tag {
+  background-color: #ede9fe;
+  color: #6d28d9;
+}
+
+/* Tasks: Emerald green theme */
+.note-card.category-tasks {
+  border-left: 6px solid #10b981;
+}
+.note-card.category-tasks .note-tag {
+  background-color: #d1fae5;
+  color: #047857;
+}
+
+/* ==========================================================================
+   7. Responsive Design (Small Screens)
+   ========================================================================== */
+@media (max-width: 600px) {
+  main {
+    margin: 1rem auto;
+    padding: 0 1rem;
+    gap: 1.5rem;
+  }
+
+  section {
+    padding: 1.25rem;
+  }
+
+  /* Form collapses into a vertical stack */
+  #note-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-group:nth-child(2) {
+    min-width: 100%;
+  }
+
+  #note-form button {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  /* Note cards stack content and actions */
+  .note-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .delete-note-btn {
+    align-self: flex-end;
+  }
+}
