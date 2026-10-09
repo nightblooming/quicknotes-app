@@ -41,11 +41,11 @@ function saveNotes() {
 // ==========================================================================
 function updateCount(count) {
   if (count === 0) {
-    noteCount.textContent = 'No notes';
+    noteCount.textContent = 'You have no notes yet.';
   } else if (count === 1) {
-    noteCount.textContent = '1 note';
+    noteCount.textContent = 'You have 1 note.';
   } else {
-    noteCount.textContent = `${count} notes`;
+    noteCount.textContent = `You have ${count} notes.`;
   }
 }
 
@@ -54,7 +54,7 @@ function setError(message = '') {
 }
 
 /**
- * Returns a clean, human-readable date and time string.
+ * Returns a human-readable date and time string.
  */
 function getReadableTimestamp() {
   const now = new Date();
@@ -86,7 +86,7 @@ function render() {
     const li = document.createElement('li');
     li.className = `note-card category-${note.category.toLowerCase()}`;
 
-    // Wrapper for note content
+    // Note content wrapper
     const contentWrap = document.createElement('div');
     contentWrap.className = 'note-content-wrap';
 
@@ -95,7 +95,7 @@ function render() {
     p.className = 'note-text';
     p.textContent = note.text;
 
-    // Metadata bar: category badge + human-readable timestamp
+    // Metadata bar: category badge + readable timestamp
     const metaWrap = document.createElement('div');
     metaWrap.className = 'note-meta';
     metaWrap.style.display = 'flex';
@@ -115,7 +115,7 @@ function render() {
     metaWrap.append(categoryTag, dateDisplay);
     contentWrap.append(p, metaWrap);
 
-    // Delete Button
+    // Delete Button (removes its own note)
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-note-btn';
     deleteBtn.type = 'button';
@@ -161,41 +161,44 @@ noteForm.addEventListener('submit', (event) => {
 
   const trimmedText = noteInput.value.trim();
 
-  // Validation
+  // 1. Empty or spaces-only validation
   if (trimmedText === '') {
-    setError('Note cannot be empty.');
+    setError('Please type a note first.');
     noteInput.focus();
     return;
   }
 
+  // 2. Character limit validation
   if (trimmedText.length > MAX_NOTE_LENGTH) {
-    setError(`Note cannot exceed ${MAX_NOTE_LENGTH} characters (currently ${trimmedText.length}).`);
+    setError('Notes must be 200 characters or fewer.');
     noteInput.focus();
     return;
   }
 
-  // Clear validation error if any
+  // 3. Clear error when valid note is added
   setError('');
 
-  // Add note object, persist & re-render
+  // Add note, persist to localStorage, and re-render
   addNote(trimmedText, noteCategory.value);
 
-  // Clear input and return focus
+  // Clear input and focus back
   noteInput.value = '';
   noteInput.focus();
 });
 
+// Clear error message when the user begins typing again
 noteInput.addEventListener('input', () => {
   if (errorMessage.textContent) {
     setError('');
   }
 });
 
+// Real-time search filter listener
 searchInput.addEventListener('input', () => {
   render();
 });
 
 // ==========================================================================
-// 7. Initial Run
+// 7. Initial Load
 // ==========================================================================
 render();
